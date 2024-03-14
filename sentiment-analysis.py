@@ -223,3 +223,77 @@ print("Simple model trained.")
 print("")
 
 # extract the weights of the words and store them in a dictionary that maps feature names to coefficients
+feature_names_small_vec = small_vectorizer.get_feature_names_out()
+
+coefficients_small_vec = simple_model.coef_[0]
+
+intercept_small_vec = simple_model.intercept_[0]
+
+word_coef = dict(zip(feature_names_small_vec, coefficients_small_vec))
+word_coef['intercept'] = intercept_small_vec
+
+for word, coef in sorted(word_coef.items(), key=lambda item: item[1], reverse=True):
+    print(f"{word}: {coef}")
+
+print("")
+
+# find the number of positive coefficients
+num_positive_coefficients = sum(coef > 0 for coef in coefficients_small_vec)
+
+# determine whether the positive words in the simple model are also positive in the sentiment model
+positive_significant_words = [word for word, coef in word_coef.items() if coef > 0 and word != 'intercept']
+
+sentiment_feature_names = cv.get_feature_names_out()
+sentiment_coefficients = dict(zip(sentiment_feature_names, sentiment_model.coef_[0]))
+
+all_positive_in_sentiment_model = all(sentiment_coefficients[word] > 0 for word in positive_significant_words)
+
+print("Are all positive significant words from simple_model also positive in sentiment_model?", all_positive_in_sentiment_model)
+
+print("")
+# compute the classification accuracies for both models on the train data
+training_accuracy_sentiment_model = get_classification_accuracy(sentiment_model, X_train, y_train)
+
+training_accuracy_simple_model = get_classification_accuracy(simple_model, X_train_subset, y_train)
+
+print(f"Training Accuracy of sentiment_model: {training_accuracy_sentiment_model}")
+print(f"Training Accuracy of simple_model: {training_accuracy_simple_model}")
+
+higher_accuracy_model = "sentiment_model" if training_accuracy_sentiment_model > training_accuracy_simple_model else "simple_model"
+print(f"Model with higher accuracy on the training set: {higher_accuracy_model}")
+
+print("")
+# compute the classification accuracies for both models on the test data
+X_test_simple = vstack(test_data['word_count_subset_vec'].values)
+
+test_accuracy_sentiment_model = get_classification_accuracy(sentiment_model, X_test, y_test)
+
+test_accuracy_simple_model = get_classification_accuracy(simple_model, X_test_simple, y_test)
+
+print(f"Test Accuracy of sentiment_model: {test_accuracy_sentiment_model}")
+print(f"Test Accuracy of simple_model: {test_accuracy_simple_model}")
+
+higher_accuracy_model_test = "sentiment_model" if test_accuracy_sentiment_model > test_accuracy_simple_model else "simple_model"
+print(f"Model with higher accuracy on the testing set: {higher_accuracy_model_test}")
+
+print("")
+# function to return a majority classifier for the column label of frame data
+def compute_majority_classifier(data, label):
+    majority_label = data[label].mode()[0]
+    
+    def majority_classifier(_):
+        return majority_label
+    
+    return majority_classifier
+
+majority_classifier_train = compute_majority_classifier(train_data, 'sentiment')
+
+majority_class = majority_classifier_train(None)
+print(f"The majority classifier always predicts: {majority_class}")
+
+# compute the accuracy of the majority classifier on the test data
+majority_label = train_data['sentiment'].mode()[0]
+
+majority_accuracy_test = (test_data['sentiment'] == majority_label).mean()
+
+print(f"Accuracy of the majority classifier on test_data: {round(majority_accuracy_test, 2)}")
