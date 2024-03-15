@@ -297,3 +297,52 @@ majority_label = train_data['sentiment'].mode()[0]
 majority_accuracy_test = (test_data['sentiment'] == majority_label).mean()
 
 print(f"Accuracy of the majority classifier on test_data: {round(majority_accuracy_test, 2)}")
+
+print("")
+
+# exploring precision and recall
+
+# compute the confusion matrix
+from sklearn.metrics import confusion_matrix
+
+y_pred = sentiment_model.predict(X_test)
+
+cm = confusion_matrix(y_test, y_pred)
+
+tn, fp, fn, tp = cm.ravel()
+print(f"True Negatives: {tn}")
+print(f"False Positives: {fp}")
+print(f"False Negatives: {fn}")
+print(f"True Positives: {tp}")
+
+recall_for_positive_class = tp / (tp + fn)
+print(f"Fraction of positive reviews correctly predicted as positive: {recall_for_positive_class}")
+
+print("")
+# assign costs to false positives and false negatives
+cost_false_negative = 100
+cost_false_positive = 1
+
+total_cost = (cost_false_negative * fn) + (cost_false_positive * fp)
+
+print(f"Total cost on the test data: ${total_cost}")
+
+print("")
+
+# evaluate precision and recall
+from sklearn.metrics import precision_score, recall_score
+
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+
+print(f"Precision: {precision:.3f}")
+print(f"Recall: {recall:.3f}")
+
+# determine if the model has a recal >= 95%
+print(f"Recall: {recall:.3f}")
+
+meets_threshold = recall >= 0.95
+print(f"Does the model's recall meet the threshold of 95%? {'Yes' if meets_threshold else 'No'}")
+
+
+
