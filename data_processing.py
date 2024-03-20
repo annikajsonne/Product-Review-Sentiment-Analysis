@@ -1,11 +1,8 @@
 import pandas as pd
 import numpy as np
-import math
 import string
 from sklearn.feature_extraction.text import CountVectorizer
 from scipy import sparse
-from sklearn.linear_model import LogisticRegression
-from scipy.sparse import vstack
 
 def load_data(file_path):
     """
@@ -68,16 +65,4 @@ def create_feature_vectors(products, stop_words, min_df=2, max_df=0.6):
     word_count_vector = cv.fit_transform(products['review'])
     products['word_count_vec'] = [sparse.csr_matrix(word_count_vector[i]) for i in range(word_count_vector.shape[0])]
     return cv
-
-
-def create_sentiment(products):
-    """
-    Create a sentiment column.
-
-    Parameters:
-        products (pandas.DataFrame): Input DataFrame.
-
-    Returns:
-        None
-    """
 

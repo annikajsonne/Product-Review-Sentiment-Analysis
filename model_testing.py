@@ -1,7 +1,4 @@
 from scipy.sparse import vstack
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import precision_score, recall_score
 import numpy as np
 
 def predict_test(test_data, sentiment_model):

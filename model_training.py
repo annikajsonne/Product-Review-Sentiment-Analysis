@@ -1,7 +1,5 @@
-# model_training.py
 from scipy.sparse import vstack
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
 
 def train_model(train_data):
     """

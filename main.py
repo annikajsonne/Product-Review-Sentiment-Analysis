@@ -1,16 +1,13 @@
-import pandas as pd
-import numpy as np
 from scipy.sparse import vstack
 from sklearn.metrics import precision_score, recall_score
 
 from data_processing import (
-    create_sentiment,
     load_data,
     preprocess_data,
     create_feature_vectors,
 )
 from model_training import train_model, train_simple_model
-from feature_engineering import (
+from utils import (
     create_subset_features,
     extract_weights,
     extract_simple_weights,
