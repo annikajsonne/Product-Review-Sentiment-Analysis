@@ -28,10 +28,6 @@ from model_testing import (
 import warnings
 
 warnings.filterwarnings("ignore")
-# use WIDER CANVAS:
-from IPython.display import display, HTML
-
-display(HTML("<style>.container { width:100% !important; }</style>"))
 
 
 def main():
