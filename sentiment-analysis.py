@@ -33,7 +33,6 @@ stop_words = ['you', 'he', 'she', 'they', 'an', 'the', 'and', 'or', 'in', 'on', 
 products['review'].fillna('', inplace=True)
 
 cv = CountVectorizer(stop_words=stop_words, min_df=2, max_df=0.6)
-
 word_count_vector = cv.fit_transform(products['review'])
 products['word_count_vec'] = [sparse.csr_matrix(word_count_vector[i]) for i in range(word_count_vector.shape[0])]
 
@@ -67,6 +66,7 @@ sentiment_model = LogisticRegression(C=100, penalty='l2', solver='lbfgs', max_it
 sentiment_model.fit(X_train, y_train)
 
 print("Model trained.")
+
 # extract the weights of the words and store them in a dictionary that maps feature names to coefficients
 word_coef = {}
 feature_names = cv.get_feature_names_out()
